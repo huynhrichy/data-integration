@@ -81,26 +81,4 @@ public class Metadata {
 	public void setTimeOffset(String timeOffset) {
 		this.timeOffset = timeOffset;
 	}
-
-	/*
-	public Metadata(long eventId, String user, String ipAddr, String file, 
-		String activity, String timestamp, String timeOffset) {
-		this.eventId = eventId;
-		this.user = user;
-		this.ipAddr = ipAddr;
-		this.file = file;
-		this.activity = activity;
-		this.timestamp = timestamp;
-		this.timeOffset = timeOffset;
-	}
-
-
-	public long getEventId() {
-		return eventId;
-	}
-
-	public String toString() {
-		return "";
-	}
-	*/
 }

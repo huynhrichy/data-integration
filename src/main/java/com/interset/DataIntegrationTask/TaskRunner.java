@@ -22,8 +22,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
-
-import org.junit.*;
+import java.util.Set;
+import java.util.HashSet;
 
 public class TaskRunner {
 
@@ -73,109 +73,35 @@ public class TaskRunner {
     }
 
     public static void parseJsonFileAndCreateCsvFile(Path jsonFile, Path csvFile) {
-
         try {
-
+            // Use Jackson's ObjectMapper to create Metadata POJOs from JSON objects in jsonFile
             ObjectMapper mapper = new ObjectMapper();
-
             Iterator<Metadata> iterator = mapper.reader(Metadata.class).readValues(jsonFile.toFile());
+            
+            // Check for event duplicates with a set
+            Set<Long> eventIDs = new HashSet<Long>();
 
-            List<Record> records = new ArrayList<Record>();
+            // Write headers based on schema for behaviour
+            String headers = "TIMESTAMP,ACTION,USER,FOLDER,FILENAME,IP\n";
+            Files.write(csvFile, headers.getBytes(StandardCharsets.US_ASCII));
 
-            // Convert Metadata into Record objects for use as CSV output
+            // Convert Metadata into Record objects for CSV-formatted output
             while (iterator.hasNext()) {
-                records.add(new Record(iterator.next()));
+                Record record = new Record(iterator.next());
+
+                // If Record fits exclusion criteria (duplicate eventID or invalid activity), do not write it
+                if (!record.getAction().equals("") && !eventIDs.contains(record.getEventID())) {
+
+                    Files.write(csvFile, record.toString().concat("\n")
+                        .getBytes(StandardCharsets.US_ASCII), StandardOpenOption.CREATE, 
+                        StandardOpenOption.WRITE, StandardOpenOption.APPEND);
+                    
+                    eventIDs.add(record.getEventID());
+                }
             }
-
-            System.out.println("---");
-            System.out.println(records.size() + " Record objects");
-            System.out.println("First Record: " + records.get(0));
-            System.out.println("Last Record: " + records.get(records.size() - 1));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Get the test data, try with the first element
-    private static void testMetadataToRecord(Path jsonFile) {
-        try {
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            Iterator<Metadata> iterator = mapper.reader(Metadata.class).readValues(jsonFile.toFile());
-
-            for (int i = 0; i < 4; i++) {
-                iterator.next();
-            }
-
-            Metadata metadata = iterator.next();
-
-            Record record = new Record(metadata);
-
-            //System.out.println("Metadata timestamp: " + metadata.getTimestamp() + "; Metadata time offset: " + metadata.getTimeOffset()); 
-            //System.out.println("Record timestamp: " + record.getTimestamp());
-            System.out.println(metadata.getIpAddr());
-            System.out.println(record);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void doJodaStuff() {
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy hh:mm:ssaZZ");
-        DateTime temp = dtf.withOffsetParsed().parseDateTime("01/14/2016 07:37:36PM" + "-08:00");
-        //DateTime temp = dtf.withOffsetParsed().parseDateTime("01/14/2016 09:16:54PM" + "Z");
-        DateTimeZone dtz = temp.getZone();
-
-        DateTime dateTime = new DateTime(temp.toDate());
-        DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"); // From before
-        DateTimeFormatter dtf3 = dtf2.withZone(dtz); // Correct'un
-
-        System.out.println(dateTime.toString(dtf2)); 
-        System.out.println(dateTime.toString(dtf3).replaceAll("\\+00:00", "Z")); // Replaces ending with Z for UTC 
-    }
-
-    private void doCSVStuff() {
-        // Make a fresh CSV file        
-        /*
-        try {
-
-            String data = "TIMESTP,ACTION,USER,FOLDER,FILENE,IP";
-
-            Files.write(csvFile, data.getBytes(StandardCharsets.US_ASCII), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
-    }
-
-    private void doIteratorStuff() {
-
-            //while (iterator.hasNext()) {
-                //System.out.println(iterator.next().getEventId());
-            //}
-
-            //List<Metadata> metadataList = mapper.readValue(jsonFile.toFile(), Metadata.class);
-
-            //mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-            //String string = "{\"eventId\" : 111111}";
-
-            //Metadata metadata = mapper.readValue(jsonFile.toFile(), Metadata.class);
-
-            //Metadata metadata = mapper.readValue(string, Metadata.class);
-
-            //Iterator iterator = mapper.readValues(jsonFile.toFile(), Metadata.class);
-
-            //Metadata metadata = (Metadata) iterator.next();
-
-            //System.out.println(metadata.getEventId());
-
-            //while (iterator.hasNext()) {
-            //    iterator.next()
-            //}
     }
 }

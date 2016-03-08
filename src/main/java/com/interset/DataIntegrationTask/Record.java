@@ -7,9 +7,11 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 
 public class Record {
+	private long eventID;
 	private String timestamp, action, user, folder, fileName, ip;
 
 	public Record() {
+		this.eventID = 0;
 		this.timestamp = "";
 		this.action = "";
 		this.user = "";
@@ -20,6 +22,7 @@ public class Record {
 
 	public Record(Metadata metadata) {
 		this();
+		setEventID(metadata.getEventId());
 		setTimestamp(metadata.getTimestamp(), metadata.getTimeOffset());
 		setAction(metadata.getActivity());
 		setUser(metadata.getUser());
@@ -28,42 +31,32 @@ public class Record {
 		setIP(metadata.getIpAddr());
 	}
 
-/*
-	public Record(String timestamp, String action, String user, 
-		String folder, String fileName, String ip) {
-		this.timestamp = timestamp;
-		this.action = action;
-		this.user = user;
-		this.folder = folder;
-		this.fileName = fileName;
-		this.ip = ip;
+	public void setEventID(long eventId) {
+		this.eventID = eventId;
 	}
-*/
-	// Use Joda to obtain the string and save it
+
 	public void setTimestamp(String timestamp, String timeOffset) {
+		// Set to UTC (Zulu) time if no offset given
 		if (timeOffset == null || timeOffset.equals("")) {
-			//System.out.println("zulu");
 			timeOffset = "+00:00";
 		}
 
+		// Use Joda to parse the time and time zone
         DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy hh:mm:ssaZZ");
         DateTime temp = dtf.withOffsetParsed().parseDateTime(timestamp + timeOffset);
-        //DateTime temp = dtf.withOffsetParsed().parseDateTime("01/14/2016 09:16:54PM" + "Z");
         DateTimeZone dtz = temp.getZone();
 
+        // Format to ISO 8601 compliant string, with milliseconds
         DateTime dateTime = new DateTime(temp.toDate());
-        //DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"); // From before
-        DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZZ"); // No ms
-        DateTimeFormatter dtf3 = dtf2.withZone(dtz); // Correct'un
+        DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        DateTimeFormatter dtf3 = dtf2.withZone(dtz);
 
-        //System.out.println(dateTime.toString(dtf3).replaceAll("\\+00:00", "Z")); // Replaces ending with Z for UTC 
-
+        // Set timestamp; replace UTC with Z
         this.timestamp = dateTime.toString(dtf3).replaceAll("\\+00:00", "Z");
 	}
 
-	// Decide this Record to be one of three actions based on given activity
-	// If activity does not map, do not include in the CSV
 	public void setAction(String activity) {
+		// Decide this Record to be one of three actions based on given activity
 		switch (activity) {
 			case "createdDoc":
 			case "addedText":
@@ -79,14 +72,15 @@ public class Record {
 			case "viewedDoc":
 				action = "ACCESSED";
 				break;
+			// If activity does not map, Record will not be written to CSV
 			default:
 				action = "";
 				break;
 		}
 	}
 
-	// Get the username from the email address or SYSTEM or ADMIN
 	public void setUser(String user) {
+		// Get the username from the email address or SYSTEM or ADMIN
 		if (user.contains("@")) {
 			// If email
 			this.user = user.substring(0, user.indexOf("@"));
@@ -96,19 +90,23 @@ public class Record {
 		}
 	}
 
-	// Get the directory from the filepath
 	public void setFolder(String file) {
+		// Get the directory from the filepath
 		this.folder = file.substring(0, file.lastIndexOf("/") + 1);
 	}
 
-	// Get the filename from the filepath
 	public void setFileName(String file) {
+		// Get the filename from the filepath
 		this.fileName = file.substring(file.lastIndexOf("/") + 1);
 	}
 
-	// Get the IP
 	public void setIP(String ipAddr) {
+		// Get the IP
 		this.ip = ipAddr;
+	}
+
+	public long getEventID() {
+		return eventID;
 	}
 
 	public String getUser() {
@@ -136,6 +134,7 @@ public class Record {
 	}
 
 	public String toString() {
+		// Format string for CSV row
 		return "\"" + timestamp + "\",\"" + action + "\",\"" + user + "\",\"" + folder + "\",\"" + fileName + "\",\"" + ip + "\"";
 	}
 }
