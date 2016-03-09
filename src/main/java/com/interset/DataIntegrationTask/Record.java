@@ -5,10 +5,15 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.LocalDate;
 
 public class Record {
 	private long eventID;
 	private String timestamp, action, user, folder, fileName, ip;
+
+	// For comparing with other dates
+	private DateTime dateTime; 
+	private DateTimeZone timeZone;
 
 	public Record() {
 		this.eventID = 0;
@@ -18,12 +23,15 @@ public class Record {
 		this.folder = "";
 		this.fileName = "";
 		this.ip = "";
+		this.dateTime = new DateTime();
+		this.timeZone = this.dateTime.getZone();
 	}
 
 	public Record(Metadata metadata) {
 		this();
 		setEventID(metadata.getEventId());
-		setTimestamp(metadata.getTimestamp(), metadata.getTimeOffset());
+		setDateTime(metadata.getTimestamp(), metadata.getTimeOffset());
+		setTimestamp(this.dateTime, this.timeZone);
 		setAction(metadata.getActivity());
 		setUser(metadata.getUser());
 		setFolder(metadata.getFile());
@@ -35,7 +43,7 @@ public class Record {
 		this.eventID = eventId;
 	}
 
-	public void setTimestamp(String timestamp, String timeOffset) {
+	public void setDateTime(String timestamp, String timeOffset) {
 		// Set to UTC (Zulu) time if no offset given
 		if (timeOffset == null || timeOffset.equals("")) {
 			timeOffset = "+00:00";
@@ -44,15 +52,24 @@ public class Record {
 		// Use Joda to parse the time and time zone
         DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy hh:mm:ssaZZ");
         DateTime temp = dtf.withOffsetParsed().parseDateTime(timestamp + timeOffset);
-        DateTimeZone dtz = temp.getZone();
+        this.timeZone = temp.getZone();
 
         // Format to ISO 8601 compliant string, with milliseconds
-        DateTime dateTime = new DateTime(temp.toDate());
-        DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-        DateTimeFormatter dtf3 = dtf2.withZone(dtz);
+        this.dateTime = new DateTime(temp.toDate());
+        //DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        //DateTimeFormatter dtf3 = dtf2.withZone(dtz);
 
         // Set timestamp; replace UTC with Z
-        this.timestamp = dateTime.toString(dtf3).replaceAll("\\+00:00", "Z");
+        //this.timestamp = dateTime.toString(dtf3).replaceAll("\\+00:00", "Z");
+
+        // Set local date for use with date comparisons
+        //localDate = dateTime.toLocalDateTime();
+	}
+
+	public void setTimestamp(DateTime dateTime, DateTimeZone timeZone) {
+        DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        DateTimeFormatter dtf3 = dtf2.withZone(timeZone);
+		this.timestamp = dateTime.toString(dtf3).replaceAll("\\+00:00", "Z");
 	}
 
 	public void setAction(String activity) {
@@ -131,6 +148,14 @@ public class Record {
 
 	public String getTimestamp() {
 		return timestamp;
+	}
+
+	public DateTime getDateTime() {
+		return dateTime;
+	}
+
+	public DateTimeZone getTimeZone() {
+		return timeZone;
 	}
 
 	public String toString() {

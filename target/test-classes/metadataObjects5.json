@@ -1,0 +1,5 @@
+{"eventId": 865423732, "timestamp": "01/14/2016 07:37:36PM", "ipAddr": "10.10.10.107", "user": "rGarcia@company.com", "file": "/data/onlineDocs/2015/Q2/expences-May-2015.doc", "activity": "addedText", "timeOffset": "-08:00"}
+{"eventId": 865423736, "timestamp": "01/14/2016 09:16:54PM", "ipAddr": "10.10.10.311", "user": "ADMIN", "file": "/data/onlineDocs/2014/Q4/expenses-Oct.doc", "activity": "viewedDoc"}
+{"eventId": 865423741, "timestamp": "01/14/2016 11:16:27PM", "ipAddr": "10.10.10.201", "user": "wAnderson@company.com", "file": "/data/onlineDocs/README.MD", "activity": "deletedText", "timeOffset": "-05:00"}
+{"eventId": 865423741, "timestamp": "01/14/2016 11:16:27PM", "ipAddr": "10.10.10.201", "user": "wAnderson@company.com", "file": "/data/onlineDocs/README.MD", "activity": "deletedText", "timeOffset": "-05:00"}
+{"eventId": 865423739, "timestamp": "01/14/2016 10:39:14PM", "ipAddr": "127.0.0.1", "user": "SYSTEM", "file": "/data/onlineDocs/2014/Q4/expenses-Oct.doc", "activity": "hashed"}

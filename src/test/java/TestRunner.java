@@ -34,8 +34,8 @@ public class TestRunner {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-	    String jsonFile = System.getProperty("jsonFile");
-	    String csvFile = System.getProperty("csvFile");
+	    //String jsonFile = System.getProperty("jsonFile");
+	    //String csvFile = System.getProperty("csvFile");
 
 	    record = new Record();
 	    metadata = new Metadata();
@@ -48,11 +48,12 @@ public class TestRunner {
 	}
 
 	@Test
-	public void testTimestamp() {
+	public void testTimeStamp() {
 		String timestamp = "01/14/2016 07:37:36PM";
 		String timeOffset = "-08:00";
 
-		record.setTimestamp(timestamp, timeOffset);
+		record.setDateTime(timestamp, timeOffset);
+		record.setTimestamp(record.getDateTime(), record.getTimeZone());
 
 		assertEquals("2016-01-14T19:37:36.000-08:00", record.getTimestamp());
 	}
@@ -62,7 +63,8 @@ public class TestRunner {
 		String timestamp = "01/14/2016 09:16:54PM";
 		String timeOffset = "";
 
-		record.setTimestamp(timestamp, timeOffset);
+		record.setDateTime(timestamp, timeOffset);
+		record.setTimestamp(record.getDateTime(), record.getTimeZone());
 
 		assertEquals("2016-01-14T21:16:54.000Z", record.getTimestamp());
 	}
@@ -184,5 +186,45 @@ public class TestRunner {
 		record = new Record(metadata);
 
 		assertEquals("\"2016-01-14T19:37:36.000-08:00\",\"ADD\",\"rGarcia\",\"/data/onlineDocs/2015/Q2/\",\"expences-May-2015.doc\",\"10.10.10.107\"", record.toString());
+	}
+
+	@Test
+	public void testNumberOfValidRecordsWithMetadataObjects5() {
+		Path jsonFile = null;
+
+        try {
+            jsonFile = Paths.get("src/test/resources/metadataObjects5.json");
+
+            ObjectMapper mapper = new ObjectMapper();
+            Iterator<Metadata> iterator = mapper.reader(Metadata.class).readValues(jsonFile.toFile());
+
+            Set<Long> eventIDs = new HashSet<Long>();
+
+            int linesRead = 0;
+
+            Set<Record> records = new HashSet<Record>();
+
+            while (iterator.hasNext()) {
+                Record record = new Record(iterator.next());
+
+            	if (!eventIDs.contains(record.getEventID()) && !record.getAction().equals("")) {
+            		records.add(record);
+            		eventIDs.add(record.getEventID());
+            	}
+
+            	linesRead++;
+            }
+
+            assertEquals(5, linesRead);
+            assertEquals(3, records.size());
+
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+	}
+
+	@Test
+	public void testMetricsWithMetaDataObjects10() {
+		Metrics metrics = new Metrics();
 	}
 }
