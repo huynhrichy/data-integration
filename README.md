@@ -28,3 +28,7 @@ The `Metadata` class is the raw POJO version of the metadata objects from the JS
 `Record` represents the Java object form of what will be written as CSV. The action mapping and Joda DateTime magic happen here. 
 
 `TestRunner` houses the JUnit tests I wrote to verify the format of information in Record objects, mapping from one form to another, and metrics according to the sample metadata I made.
+
+##### Notes:
+
+Files are determined as unique based on their directory and filename. 
