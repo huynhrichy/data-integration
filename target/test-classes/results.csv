@@ -4,6 +4,3 @@ TIMESTAMP,ACTION,USER,FOLDER,FILENAME,IP
 "2016-01-14T20:49:07.000-08:00","ADD","rGarcia","/data/onlineDocs/2013/Q1/","bigSoftwareDeal.doc","10.10.10.107"
 "2016-01-14T21:16:54.000Z","ACCESSED","ADMIN","/data/onlineDocs/2014/Q4/","expenses-Oct.doc","10.10.10.311"
 "2016-01-14T21:30:13.000-05:00","ADD","sJohnson","/data/onlineDocs/2014/Q1/","big_year.doc","10.10.10.102"
-"2016-01-14T22:23:30.000-08:00","ADD","rGarcia","/data/onlineDocs/2013/Q4/","expences-Dec.doc","10.10.10.107"
-"2016-01-14T23:15:04.000-05:00","ADD","jSmith","/data/onlineDocs/2015/Q1/","getReady.doc","10.10.10.101"
-"2016-01-14T23:16:27.000-05:00","REMOVE","wAnderson","/data/onlineDocs/","README.MD","10.10.10.201"

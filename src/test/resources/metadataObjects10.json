@@ -1,10 +1,10 @@
 {"eventId": 865423732, "timestamp": "01/14/2016 07:37:36PM", "ipAddr": "10.10.10.107", "user": "rGarcia@company.com", "file": "/data/onlineDocs/2015/Q2/expences-May-2015.doc", "activity": "addedText", "timeOffset": "-08:00"}
 {"eventId": 865423733, "timestamp": "01/14/2016 07:59:40PM", "ipAddr": "10.10.10.203", "user": "eThomas@company.com", "file": "/data/onlineDocs/help.doc", "activity": "viewedDoc", "timeOffset": "-08:00"}
 {"eventId": 865423734, "timestamp": "01/14/2016 08:49:07PM", "ipAddr": "10.10.10.107", "user": "rGarcia@company.com", "file": "/data/onlineDocs/2013/Q1/bigSoftwareDeal.doc", "activity": "addedText", "timeOffset": "-08:00"}
-{"eventId": 865423735, "timestamp": "01/14/2016 08:53:42PM", "ipAddr": "127.0.0.1", "user": "SYSTEM", "file": "/data/onlineDocs/2013/Q2/expences-May.doc", "activity": "hashed"}
 {"eventId": 865423736, "timestamp": "01/14/2016 09:16:54PM", "ipAddr": "10.10.10.311", "user": "ADMIN", "file": "/data/onlineDocs/2014/Q4/expenses-Oct.doc", "activity": "viewedDoc"}
 {"eventId": 865423737, "timestamp": "01/14/2016 09:30:13PM", "ipAddr": "10.10.10.102", "user": "sJohnson@company.com", "file": "/data/onlineDocs/2014/Q1/big_year.doc", "activity": "createdDoc", "timeOffset": "-05:00"}
-{"eventId": 865423738, "timestamp": "01/14/2016 10:23:30PM", "ipAddr": "10.10.10.107", "user": "rGarcia@company.com", "file": "/data/onlineDocs/2013/Q4/expences-Dec.doc", "activity": "createdDoc", "timeOffset": "-08:00"}
+{"eventId": 865423732, "timestamp": "01/14/2016 07:37:36PM", "ipAddr": "10.10.10.107", "user": "rGarcia@company.com", "file": "/data/onlineDocs/2015/Q2/expences-May-2015.doc", "activity": "addedText", "timeOffset": "-08:00"}
+{"eventId": 865423733, "timestamp": "01/14/2016 07:59:40PM", "ipAddr": "10.10.10.203", "user": "eThomas@company.com", "file": "/data/onlineDocs/help.doc", "activity": "viewedDoc", "timeOffset": "-08:00"}
+{"eventId": 865423735, "timestamp": "01/14/2016 08:53:42PM", "ipAddr": "127.0.0.1", "user": "SYSTEM", "file": "/data/onlineDocs/2013/Q2/expences-May.doc", "activity": "hashed"}
 {"eventId": 865423739, "timestamp": "01/14/2016 10:39:14PM", "ipAddr": "127.0.0.1", "user": "SYSTEM", "file": "/data/onlineDocs/2014/Q4/expenses-Oct.doc", "activity": "hashed"}
-{"eventId": 865423740, "timestamp": "01/14/2016 11:15:04PM", "ipAddr": "10.10.10.101", "user": "jSmith@company.com", "file": "/data/onlineDocs/2015/Q1/getReady.doc", "activity": "createdDoc", "timeOffset": "-05:00"}
-{"eventId": 865423741, "timestamp": "01/14/2016 11:16:27PM", "ipAddr": "10.10.10.201", "user": "wAnderson@company.com", "file": "/data/onlineDocs/README.MD", "activity": "deletedText", "timeOffset": "-05:00"}
+{"eventId": 865423739, "timestamp": "01/14/2016 10:39:14PM", "ipAddr": "127.0.0.1", "user": "SYSTEM", "file": "/data/onlineDocs/2014/Q4/expenses-Oct.doc", "activity": "hashed"}

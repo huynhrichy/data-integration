@@ -5,7 +5,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.LocalDate;
 
 public class Record {
 	private long eventID;
@@ -53,20 +52,11 @@ public class Record {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy hh:mm:ssaZZ");
         DateTime temp = dtf.withOffsetParsed().parseDateTime(timestamp + timeOffset);
         this.timeZone = temp.getZone();
-
-        // Format to ISO 8601 compliant string, with milliseconds
         this.dateTime = new DateTime(temp.toDate());
-        //DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-        //DateTimeFormatter dtf3 = dtf2.withZone(dtz);
-
-        // Set timestamp; replace UTC with Z
-        //this.timestamp = dateTime.toString(dtf3).replaceAll("\\+00:00", "Z");
-
-        // Set local date for use with date comparisons
-        //localDate = dateTime.toLocalDateTime();
 	}
 
 	public void setTimestamp(DateTime dateTime, DateTimeZone timeZone) {
+        // Format to ISO 8601 compliant string, with milliseconds
         DateTimeFormatter dtf2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         DateTimeFormatter dtf3 = dtf2.withZone(timeZone);
 		this.timestamp = dateTime.toString(dtf3).replaceAll("\\+00:00", "Z");

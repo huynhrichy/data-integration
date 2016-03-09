@@ -5,23 +5,13 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.StandardOpenOption;
 import java.io.IOException;
-
 import java.io.File;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+
 import java.util.Iterator;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.ISODateTimeFormat;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -34,9 +24,6 @@ public class TestRunner {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-	    //String jsonFile = System.getProperty("jsonFile");
-	    //String csvFile = System.getProperty("csvFile");
-
 	    record = new Record();
 	    metadata = new Metadata();
 	}
@@ -162,7 +149,8 @@ public class TestRunner {
 
 	        metadata = mapper.readValue(jsonObject, Metadata.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+            System.err.println("Could not map from JSON.");
+            System.exit(1);
 		}
 	}
 
@@ -218,13 +206,30 @@ public class TestRunner {
             assertEquals(5, linesRead);
             assertEquals(3, records.size());
 
-        } catch (Exception e) {
-        	e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Could not map from JSON file.");
+            System.exit(1);
         }
 	}
 
 	@Test
 	public void testMetricsWithMetaDataObjects10() {
-		Metrics metrics = new Metrics();
+		Filter filter = new Filter(Paths.get("src/test/resources/metadataObjects10.json"));
+        filter.parseJSONToMetadataObjectIterator();
+        filter.convertMetadataToRecordObjects();
+
+        Metrics metrics = filter.getMetrics();
+
+        assertEquals(10, metrics.getLinesRead());
+        assertEquals(5, metrics.getNoActionMapping() + metrics.getDuplicates());
+        assertEquals(3, metrics.getNoActionMapping());
+        assertEquals(2, metrics.getDuplicates());
+        assertEquals(4, metrics.getUniqueUsers().size());
+        assertEquals(5, metrics.getUniqueFiles().size());
+        assertEquals("2016-01-14T21:16:54.000Z", metrics.getStartRecord().getTimestamp());
+        assertEquals("2016-01-14T20:49:07.000-08:00", metrics.getEndRecord().getTimestamp());
+        assertEquals(3, metrics.getAdd());
+        assertEquals(0, metrics.getRemove());
+        assertEquals(2, metrics.getAccessed());
 	}
 }

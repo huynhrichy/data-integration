@@ -15,17 +15,16 @@ import java.util.Set;
 import java.util.HashSet;
 
 public class Metrics {
-	private int linesRead, /*droppedEventsCounts, uniqueUsers, uniqueFiles,*/ noActionMapping, duplicates, add, remove, accessed;
-	private String startDate, endDate;
+	private int linesRead, noActionMapping, duplicates, add, remove, accessed;
+	private Record startRecord, endRecord;
 	private Set<String> uniqueUsers, uniqueFiles;
 
 	public Metrics() {
 		this.linesRead = 0;
-		//this.droppedEventsCounts = 0;
 		this.noActionMapping = 0;
 		this.duplicates = 0;
-		this.startDate = "";
-		this.endDate = "";
+		this.startRecord = null;
+		this.endRecord = null;
 		this.add = 0;
 		this.remove = 0;
 		this.accessed = 0;
@@ -33,24 +32,39 @@ public class Metrics {
 		uniqueFiles = new HashSet<String>();
 	}
 
-	public void setLinesRead(int lr) { linesRead = lr; }
-	//public void setDroppedEventsCounts(int dec) { droppedEventsCounts = dec; }
-	public void setNoActionMapping(int nam) { noActionMapping = nam; }
-	public void setDuplicates(int d) { duplicates = d; }
-	public void setStartDate(String sd) { startDate = sd; }
-	public void setEndDate(String ed) { endDate = ed; }
-	public void setAdd(int a) { add = a; }
-	public void setRemove(int r) { remove = r; }
-	public void setAccessed(int a) { accessed = a; }
+	public void incrementAction(Record record) {
+        switch (record.getAction()) {
+            case "ADD":
+                setAdd(getAdd() + 1);
+                break;
+            case "REMOVE":
+                setRemove(getRemove() + 1);
+                break;
+            case "ACCESSED":
+                setAccessed(getAccessed() + 1);
+                break;
+            default:
+                break;
+		}
+	}
 
-	public int getLinesRead() { return linesRead; }
-	public int getNoActionMapping() { return noActionMapping; }
-	public int getDuplicates() { return duplicates; }
-	public Set getUniqueUsers() { return uniqueUsers; }
-	public Set getUniqueFiles() { return uniqueFiles; }
-	public int getAdd() { return add; }
-	public int getRemove() { return remove; }
-	public int getAccessed() { return accessed; }
+	public void determineTimeRange(Record record) {
+		if (startRecord == null && endRecord == null) {
+            startRecord = record;
+            endRecord = record;
+        } else if (record.getDateTime().isBefore(startRecord.getDateTime())) {
+            startRecord = record;
+        } else if (record.getDateTime().isAfter(endRecord.getDateTime())) {
+            endRecord = record;
+        }
+	}
+
+	public void update(Record record) {
+        incrementAction(record);
+        getUniqueUsers().add(record.getUser());
+        getUniqueFiles().add(record.getFolder() + record.getFileName());
+        determineTimeRange(record);
+	}
 
 	public void printMetricsAsJSON() {
         try {
@@ -73,8 +87,8 @@ public class Metrics {
 
             metrics.put("uniqueUsers", uniqueUsers.size());
             metrics.put("uniqueFiles", uniqueFiles.size());
-            metrics.put("startDate", startDate);
-            metrics.put("endDate", endDate);
+            metrics.put("startDate", startRecord.getTimestamp());
+            metrics.put("endDate", endRecord.getTimestamp());
 
             ObjectNode actions = factory.objectNode();
             actions.put("ADD", add);
@@ -85,26 +99,26 @@ public class Metrics {
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             mapper.writeValue(System.out, metrics);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Could not work with JsonGenerator or ObjectMapper.");
+            System.exit(1);
         }
 	}
 
-	/*
-	// Public for brevity
-	public int linesRead, droppedEventCounts, uniqueUsers, uniqueFiles;
-	public String startDate, endDate;
-	public DroppedEventMetrics droppedEvents; 
-	public ActionMetrics actions;
+	public void setLinesRead(int lr) { linesRead = lr; }
+	public void setNoActionMapping(int nam) { noActionMapping = nam; }
+	public void setDuplicates(int d) { duplicates = d; }
+	public void setAdd(int a) { add = a; }
+	public void setRemove(int r) { remove = r; }
+	public void setAccessed(int a) { accessed = a; }
 
-	public Metrics() {
-		this.linesRead = 0;
-		this.droppedEventCounts = 0;
-		this.uniqueUsers = 0;
-		this.uniqueFiles = 0;
-		this.startDate = "";
-		this.endDate = "";
-		this.droppedEvents = new DroppedEventMetrics();
-		this.actions = new ActionMetrics();
-	}
-	*/
+	public int getLinesRead() { return linesRead; }
+	public int getNoActionMapping() { return noActionMapping; }
+	public int getDuplicates() { return duplicates; }
+	public Set getUniqueUsers() { return uniqueUsers; }
+	public Set getUniqueFiles() { return uniqueFiles; }
+	public Record getStartRecord() { return startRecord; }
+	public Record getEndRecord() { return endRecord; }
+	public int getAdd() { return add; }
+	public int getRemove() { return remove; }
+	public int getAccessed() { return accessed; }
 }
